@@ -166,7 +166,7 @@
     NSLog(@"center is (%@, %@)", @(centerX), @(centerY));
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
-    label.text = [NSString stringWithFormat:@"%@%%", @([self.percentArray[index] floatValue] * 100)];
+    label.text = [NSString stringWithFormat:@"%.2f%%", [self.percentArray[index] floatValue] * 100];
     label.font = [UIFont systemFontOfSize:12];
     label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];

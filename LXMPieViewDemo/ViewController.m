@@ -11,6 +11,8 @@
 
 @interface ViewController ()<LXMPieViewDelegate>
 
+@property (nonatomic, strong) LXMPieView *pieView;
+
 @end
 
 @implementation ViewController
@@ -20,7 +22,7 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     NSMutableArray *modelArray = [NSMutableArray array];
-    NSArray *valueArray = @[@(10), @(20), @(30), @(40)];
+    NSArray *valueArray = @[@(12), @(23), @(31), @(44)];
     NSArray *colorArray = @[[UIColor redColor],
                             [UIColor orangeColor],
                             [UIColor yellowColor],
@@ -33,10 +35,17 @@
     LXMPieView *pieView = [[LXMPieView alloc] initWithFrame:CGRectMake(50, 50, 200, 200) values:modelArray];
     pieView.delegate = self;
     [self.view addSubview:pieView];
+    self.pieView = pieView;
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [pieView reloadData];
-    });
+    
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
+    [button setTitle:@"play" forState:UIControlStateNormal];
+    button.center = self.view.center;
+    button.backgroundColor = [UIColor purpleColor];
+    [button addTarget:self action:@selector(handleButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
+    
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -48,6 +57,12 @@
 
 - (void)lxmPieView:(LXMPieView *)pieView didSelectSectionAtIndex:(NSInteger)index {
     NSLog(@"didSelectSectionAtIndex : %@", @(index));
+}
+
+#pragma mark - buttonAction
+
+- (void)handleButtonTapped:(UIButton *)sender {
+    [self.pieView reloadData];
 }
 
 @end
