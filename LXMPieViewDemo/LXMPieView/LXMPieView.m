@@ -190,8 +190,23 @@
     
 }
 
+- (CABasicAnimation *)offsetAnimationForSelectionAtIndex:(NSInteger)index {
+    if (index < 0 || index > self.subLayerArray.count - 1) {
+        return nil;
+    }
+    CGFloat centerAngle = ([self.startAngleArray[index] floatValue]+ [self.endAngleArray[index] floatValue]) / 2;//某个扇形的中心的角度
+    CGFloat offsetX = 10 * cos(centerAngle);//10是圆心偏移的距离
+    CGFloat offsetY = 10 * sin(centerAngle);
+    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform"];
+    animation.fromValue = [NSValue valueWithCATransform3D:CATransform3DIdentity];
+    animation.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeTranslation(offsetX, offsetY, 0)];
+    animation.duration = 0.4;
+    animation.removedOnCompletion = NO;
+    animation.fillMode = kCAFillModeForwards;
+    return animation;
+}
 
-#pragma mark - buttonAction 
+#pragma mark - buttonAction
 
 - (void)handleTapGesture:(UITapGestureRecognizer *)sender {
     CGPoint location = [sender locationInView:sender.view];
@@ -209,6 +224,16 @@
     }
     if ([self.delegate respondsToSelector:@selector(lxmPieView:didSelectSectionAtIndex:)]
         && index >= 0) {
+        
+        for (CALayer *subLayer in self.subLayerArray) {
+            [subLayer removeAnimationForKey:@"kOffsetAnimation"];
+        }
+        
+        CAShapeLayer *selectedLayer = self.subLayerArray[index];
+        [selectedLayer addAnimation:[self offsetAnimationForSelectionAtIndex:index] forKey:@"kOffsetAnimation"];
+        
+        
+        
         [self.delegate lxmPieView:self didSelectSectionAtIndex:index];
     }
     
